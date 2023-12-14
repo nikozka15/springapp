@@ -17,6 +17,8 @@ public class UserUpdateDTO {
         this.lastName = lastName;
     }
 
+    public UserUpdateDTO() {}
+
     public String getFirstName() {
         return firstName;
     }

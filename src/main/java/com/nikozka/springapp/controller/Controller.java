@@ -37,7 +37,6 @@ public class Controller {
     public Controller(UserService userService) {
         this.userService = userService;
     }
-// todo No users Found NoContent 204 bc in getUserbyId when not found is 404
     @Operation(summary = "Get all users", description = "Retrieves a list of all users.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of users",

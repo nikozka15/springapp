@@ -51,7 +51,7 @@ public class UserService {
     }
 
     public UserDTO createUser(UserDTO user) {
-        if (!isValidUser(user)) {
+        if (isInvalidUser(user)) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid user");
         }
         if (userRepository.findByIin(user.getIin()) != null) {
@@ -64,7 +64,7 @@ public class UserService {
     }
 
     public void updateUser(String iin, UserUpdateDTO updatedUser) {
-        if (!isValidUpdatedUser(updatedUser)) {
+        if (isInvalidUser(updatedUser)) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid user");
         }
         UserEntity existingUser = userRepository.findByIin(iin);
@@ -86,33 +86,16 @@ public class UserService {
         }
     }
 
-    private boolean isValidUser(UserDTO user) {
-        Set<ConstraintViolation<UserDTO>> violations = validator.validate(user);
+    private <T> boolean isInvalidUser(T user) {
+        Set<ConstraintViolation<T>> violations = validator.validate(user);
         if (!violations.isEmpty()) {
             logViolations(violations);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
-    private boolean isValidUpdatedUser(UserUpdateDTO updatedUser) { //todo
-        Set<ConstraintViolation<UserUpdateDTO>> violations = validator.validate(updatedUser);
-        if (!violations.isEmpty()) {
-            logViolationsUpdatedUser(violations);
-            return false;
-        }
-        return true;
-    }
-
-    private void logViolationsUpdatedUser(Set<ConstraintViolation<UserUpdateDTO>> violations) { // todo
-        String violationMessages = violations.stream()
-                .map(violation -> violation.getPropertyPath() + " " + violation.getMessage())
-                .collect(Collectors.joining(", "));
-
-        logger.warn("Validation Errors: {} ", violationMessages);
-    }
-
-    private void logViolations(Set<ConstraintViolation<UserDTO>> violations) {
+    private <T> void logViolations(Set<ConstraintViolation<T>> violations) {
         String violationMessages = violations.stream()
                 .map(violation -> violation.getPropertyPath() + " " + violation.getMessage())
                 .collect(Collectors.joining(", "));
