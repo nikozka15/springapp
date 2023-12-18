@@ -4,7 +4,7 @@ import com.nikozka.springapp.dtos.UserDTO;
 import com.nikozka.springapp.dtos.UserUpdateDTO;
 import com.nikozka.springapp.entity.UserEntity;
 import com.nikozka.springapp.repository.UserRepository;
-import jakarta.validation.Validator;
+//import jakarta.validation.Validator;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,17 +28,18 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
-    @Mock
-    private Validator validator;
+//    @Mock
+//    private Validator validator;
     @Mock
     private ModelMapper modelMapper;
     @InjectMocks
     private UserService userService;
-    private final String iin = "1234567890";
-    private final UserDTO userDTO = new UserDTO("John", "Doe", iin);
-    private final UserDTO invalidUserDTO = new UserDTO("Invalid", "User", iin);
+  //  private final String invalidIin = "1234567890";
+    private final String validIin = "3483310183";
+    private final UserDTO userDTO = new UserDTO("John", "Doe", validIin);
+   // private final UserDTO invalidUserDTO = new UserDTO("I", "User", invalidIin);
     private final UserUpdateDTO userUpdateDTO = new UserUpdateDTO("John", "Doe");
-    private final UserUpdateDTO invalidUserUpdateDTO = new UserUpdateDTO("Invalid", "User");
+   // private final UserUpdateDTO invalidUserUpdateDTO = new UserUpdateDTO("Invalid", "User");
 
     @Test
     void getUserByInnTestUserFound() {
@@ -47,7 +48,7 @@ class UserServiceTest {
         when(userRepository.findByIin(anyString())).thenReturn(userEntity);
         when(modelMapper.map(userEntity, UserDTO.class)).thenReturn(userDTO);
 
-        UserDTO result = userService.getUserByInn(iin);
+        UserDTO result = userService.getUserByInn(validIin);
 
         Assertions.assertAll("UserDTO properties",
                 () -> Assertions.assertNotNull(result, "Result should not be null"),
@@ -59,10 +60,10 @@ class UserServiceTest {
 
     @Test
     void getUserByInnTestUserNotFound() {
-        when(userRepository.findByIin(iin)).thenReturn(null);
+        when(userRepository.findByIin(validIin)).thenReturn(null);
 
         ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
-                () -> userService.getUserByInn(iin));
+                () -> userService.getUserByInn(validIin));
 
         Assertions.assertAll("ResponseStatusException properties",
                 () -> Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatus(), "Status should be NOT_FOUND"),
@@ -74,8 +75,8 @@ class UserServiceTest {
     void createUserTestValidUserNotExists() {
         UserEntity userEntity = getEntity();
 
-        when(validator.validate(userDTO)).thenReturn(Set.of());
-        when(userRepository.findByIin(iin)).thenReturn(null);
+       // when(validator.validate(userDTO)).thenReturn(Set.of());
+        when(userRepository.findByIin(validIin)).thenReturn(null);
         when(modelMapper.map(userDTO, UserEntity.class)).thenReturn(userEntity);
         when(userRepository.save(userEntity)).thenReturn(userEntity);
         when(modelMapper.map(userEntity, UserDTO.class)).thenReturn(userDTO);
@@ -90,26 +91,26 @@ class UserServiceTest {
         );
     }
 
-    @Test
-    void createUserTestInvalidUser() {
-
-        when(validator.validate(invalidUserDTO)).thenReturn(Set.of(createConstraintViolation(invalidUserDTO)));
-
-        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
-                () -> userService.createUser(invalidUserDTO));
-
-        Assertions.assertAll("ResponseStatusException properties",
-                () -> Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatus(), "Status should be UNPROCESSABLE_ENTITY"),
-                () -> Assertions.assertEquals("Invalid user", exception.getReason(), "Reason should be 'Invalid user'")
-        );
-    }
+//    @Test
+//    void createUserTestInvalidUser() { // only when using programmatic validation
+//
+//      //  when(validator.validate(invalidUserDTO)).thenReturn(Set.of(createConstraintViolation(invalidUserDTO)));
+//
+//        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
+//                () -> userService.createUser(invalidUserDTO));
+//
+//        Assertions.assertAll("ResponseStatusException properties",
+//                () -> Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatus(), "Status should be UNPROCESSABLE_ENTITY"),
+//                () -> Assertions.assertEquals("Invalid user", exception.getReason(), "Reason should be 'Invalid user'")
+//        );
+//    }
 
     @Test
     void createUserTestUserIsAlreadyExist() {
         UserEntity userEntity = getEntity();
 
-        when(validator.validate(userDTO)).thenReturn(Set.of());
-        when(userRepository.findByIin(iin)).thenReturn(userEntity);
+      //  when(validator.validate(userDTO)).thenReturn(Set.of());
+        when(userRepository.findByIin(validIin)).thenReturn(userEntity);
 
         ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
                 () -> userService.createUser(userDTO));
@@ -120,27 +121,27 @@ class UserServiceTest {
         );
     }
 
-    @Test
-    void updateUserTestInvalidUser() {
-
-        when(validator.validate(invalidUserUpdateDTO)).thenReturn(Set.of(createConstraintViolationUserUpdateDto(invalidUserUpdateDTO)));
-
-        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
-                () -> userService.updateUser(iin, invalidUserUpdateDTO));
-
-        Assertions.assertAll("ResponseStatusException properties",
-                () -> Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatus(), "Status should be UNPROCESSABLE_ENTITY"),
-                () -> Assertions.assertEquals("Invalid user", exception.getReason(), "Reason should be 'Invalid user'")
-        );
-    }
+//    @Test
+//    void updateUserTestInvalidUser() { // only when using programmatic validation
+//
+//      //  when(validator.validate(invalidUserUpdateDTO)).thenReturn(Set.of(createConstraintViolationUserUpdateDto(invalidUserUpdateDTO)));
+//
+//        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
+//                () -> userService.updateUser(validIin, invalidUserUpdateDTO));
+//
+//        Assertions.assertAll("ResponseStatusException properties",
+//                () -> Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatus(), "Status should be UNPROCESSABLE_ENTITY"),
+//                () -> Assertions.assertEquals("Invalid user", exception.getReason(), "Reason should be 'Invalid user'")
+//        );
+//    }
     @Test
     void updateUserTestValidUserNotExists() {
 
-        when(validator.validate(userUpdateDTO)).thenReturn(Set.of());
-        when(userRepository.findByIin(iin)).thenReturn(null);
+       // when(validator.validate(userUpdateDTO)).thenReturn(Set.of());
+        when(userRepository.findByIin(validIin)).thenReturn(null);
 
         ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
-                () -> userService.updateUser(iin, userUpdateDTO));
+                () -> userService.updateUser(validIin, userUpdateDTO));
 
         Assertions.assertAll("ResponseStatusException properties",
                 () -> Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatus(), "Status should be NOT_FOUND"),
@@ -151,10 +152,10 @@ class UserServiceTest {
     void updateUserTestValidUserFound() {
         UserEntity userEntity = getEntity();
 
-        when(validator.validate(userUpdateDTO)).thenReturn(Set.of());
-        when(userRepository.findByIin(iin)).thenReturn(userEntity);
+       // when(validator.validate(userUpdateDTO)).thenReturn(Set.of());
+        when(userRepository.findByIin(validIin)).thenReturn(userEntity);
 
-        userService.updateUser(iin, userUpdateDTO);
+        userService.updateUser(validIin, userUpdateDTO);
 
         verify(userRepository).save(argThat(entity ->
                 entity.getFirstName().equals(userUpdateDTO.getFirstName()) &&
@@ -165,18 +166,18 @@ class UserServiceTest {
     void deleteUserTestUserFoundAndSuccessfullyDeleted() {
         UserEntity existingUserEntity = getEntity();
 
-        when(userRepository.findByIin(iin)).thenReturn(existingUserEntity);
+        when(userRepository.findByIin(validIin)).thenReturn(existingUserEntity);
 
-        userService.deleteUser(iin);
+        userService.deleteUser(validIin);
 
-        verify(userRepository).deleteByIin(iin);
+        verify(userRepository).deleteByIin(validIin);
     }
     @Test
     void deleteUserTestUserNotFound() {
-        when(userRepository.findByIin(iin)).thenReturn(null);
+        when(userRepository.findByIin(validIin)).thenReturn(null);
 
         ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
-                () -> userService.deleteUser(iin));
+                () -> userService.deleteUser(validIin));
 
         Assertions.assertAll("ResponseStatusException properties",
                 () -> Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatus(), "Status should be NOT_FOUND"),
@@ -196,7 +197,7 @@ class UserServiceTest {
     }
 
     private UserEntity getEntity() {
-        UserEntity userEntity = new UserEntity("John", "Doe", iin);
+        UserEntity userEntity = new UserEntity("John", "Doe", validIin);
         userEntity.setId(1L);
         return userEntity;
     }

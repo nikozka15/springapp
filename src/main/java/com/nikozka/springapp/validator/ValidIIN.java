@@ -1,8 +1,7 @@
 package com.nikozka.springapp.validator;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
-
+import javax.validation.Constraint;
+import javax.validation.Payload;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = IINValidator.class)
 public @interface ValidIIN {
-    String message() default "Invalid IIN format";
+    String message() default "Invalid IIN";
 
     Class<?>[] groups() default {};
 

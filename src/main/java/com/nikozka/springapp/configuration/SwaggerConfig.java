@@ -22,5 +22,4 @@ public class SwaggerConfig {
                                 .name("Veronika Shyrshova")
                                 .email("vshyrshova@gmail.com")));
     }
-
 }

@@ -1,10 +1,9 @@
 package com.nikozka.springapp.validator;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
-// awtowired ??
+
 public class IINValidator implements ConstraintValidator<ValidIIN, String> {
     private static final Pattern pattern = Pattern.compile("\\d{10}");
     @Override

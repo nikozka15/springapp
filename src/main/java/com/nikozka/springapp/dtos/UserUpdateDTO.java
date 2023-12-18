@@ -1,7 +1,9 @@
 package com.nikozka.springapp.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Size;
+
+import javax.validation.constraints.Size;
+
 
 public class UserUpdateDTO {
     @Schema(description = "First name of the user", example = "John", required = true)

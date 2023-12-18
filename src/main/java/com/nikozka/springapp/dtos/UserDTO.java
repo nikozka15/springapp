@@ -2,14 +2,21 @@ package com.nikozka.springapp.dtos;
 
 import com.nikozka.springapp.validator.ValidIIN;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Size;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class UserDTO {
     @Schema(description = "First name of the user", example = "John", required = true)
+    @NotNull
     @Size(min = 3, max = 15, message = "First name must be between 3 and 15 characters")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only letters")
     private String firstName;
     @Schema(description = "Last name of the user", example = "Doe", required = true)
+    @NotNull
     @Size(min = 3, max = 20, message = "Last name must be between 3 and 20 characters")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only letters")
     private String lastName;
     @Schema(description = "Individual Identification Number", example = "1234567890", required = true)
     @ValidIIN
