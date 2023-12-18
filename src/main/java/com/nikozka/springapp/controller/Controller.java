@@ -90,9 +90,7 @@ public class Controller {
 
     @Operation(summary = "Update user by Iin", description = "Updates an existing user by Iin.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Successfully updated the user",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDTO.class))}),
+            @ApiResponse(responseCode = "204", description = "Successfully updated the user."),
             @ApiResponse(responseCode = "400", description = "Bad request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ResponseStatusException.class))),
